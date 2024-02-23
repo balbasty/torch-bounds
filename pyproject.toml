@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torch-bounds"
+authors = [
+  { name="Yael Balbastre", email="yael.balbastre@gmail.com" },
+]
+description = "Boundary conditions and real transforms in PyTorch"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dynamic = ["version"]
+license = {file = "LICENSE"}
+dependencies = [
+    "torch>=1.3",
+]
+
+[project.optional-dependencies]
+realtransforms = ["torch>=1.8"]
+
+[project.urls]
+Homepage = "https://github.com/balbasty/torch-bounds"
+Issues = "https://github.com/balbasty/torch-bounds/issues"
+
+[tool.setuptools]
+packages = ["bounds"]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "bounds/_version.py"
+versionfile_build = "bounds/_version.py"
+tag_prefix = ""
+parentdir_prefix = ""
