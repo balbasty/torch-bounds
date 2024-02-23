@@ -28,14 +28,14 @@ conditions. This table contains an extensive list of aliases:
 
 | Fourier   | SciPy `ndimage`          | Numpy `pad`   | PyTorch `pad` | PyTorch `grid_sample`            | Other                   | Description               |
 | --------- | ------------------------ | ------------- | ------------- | -------------------------------- | ----------------------- | ------------------------- |
-|           | nearest                  | edge          | border        | replicate                        | repeat                  | <code> a  a | a b c d |  d  d</code> |
-|           | constant, grid-constant  | constant      | constant      | zeros                            | zero                    | <code> 0  0 | a b c d |  0  0</code> |
-| dct1      | mirror                   | reflect       | reflect       | reflection (align_corners=False) |                         | <code> c  b | a b c d |  c  b</code> |
-| dct2      | reflect, grid-mirror     | symmetric     |               | reflection (align_corners=True)  | neumann                 | <code> b  a | a b c d |  d  c</code> |
-| dst1      |                          |               |               |                                  | antimirror              | <code>-a  0 | a b c d |  0 -d</code> |
-| dst2      |                          |               |               |                                  | antireflect, dirichlet  | <code>-b -a | a b c d | -d -c</code> |
-| dft       | grid-wrap                | wrap          | circular      |                                  | circulant               | <code> c  d | a b c d |  a  b</code> |
-|           | wrap                     |               |               |                                  |                         | <code> c  d | a b c d |  b  c</code> |
+|           | nearest                  | edge          | border        | replicate                        | repeat                  | <code> a  a &#124; a b c d &#124;  d  d</code> |
+|           | constant, grid-constant  | constant      | constant      | zeros                            | zero                    | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
+| dct1      | mirror                   | reflect       | reflect       | reflection (align_corners=False) |                         | <code> c  b &#124; a b c d &#124;  c  b</code> |
+| dct2      | reflect, grid-mirror     | symmetric     |               | reflection (align_corners=True)  | neumann                 | <code> b  a &#124; a b c d &#124;  d  c</code> |
+| dst1      |                          |               |               |                                  | antimirror              | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
+| dst2      |                          |               |               |                                  | antireflect, dirichlet  | <code>-b -a &#124; a b c d &#124; -d -c</code> |
+| dft       | grid-wrap                | wrap          | circular      |                                  | circulant               | <code> c  d &#124; a b c d &#124;  a  b</code> |
+|           | wrap                     |               |               |                                  |                         | <code> c  d &#124; a b c d &#124;  b  c</code> |
 |           |                          | linear_ramp   |
 |           |                          | minimum, maximum, mean, median |
 
