@@ -25,3 +25,7 @@ if hasattr(getattr(_torch, 'fft', None), 'fft'):
 
     __all__ += ['realtransforms']
     __all__ += realtransforms.__all__
+
+
+from . import _version  # noqa: E402
+__version__ = _version.get_versions()['version']
