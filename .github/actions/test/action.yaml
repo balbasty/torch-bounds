@@ -34,5 +34,5 @@ runs:
     - name: Test with pytest
       shell: bash -el {0}
       run: |
-        pip install .
+        pip install ".[test]"
         pytest --pyargs bounds

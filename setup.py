@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import versioneer
 
 setup(
-    packages=find_packages(),
+    packages=["bounds"],
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
 )
