@@ -21,6 +21,9 @@ to_torch
     Convert any boundary type to `torch.grid_sample` convention
 
 """  # noqa: E501
+__all__ = [
+    'BoundType', 'to_enum', 'to_int', 'to_fourier', 'to_scipy', 'to_torch',
+]
 from enum import Enum
 from typing import Union
 

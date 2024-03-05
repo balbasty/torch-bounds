@@ -25,6 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 realtransforms = ["torch>=1.8"]
+test = ["scipy"]
 
 [project.urls]
 Homepage = "https://github.com/balbasty/torch-bounds"
