@@ -28,14 +28,14 @@ conditions. This table contains an extensive list of aliases:
 
 | Fourier   | SciPy `ndimage`          | Numpy `pad`   | PyTorch `pad` | PyTorch `grid_sample`            | Other                   | Description               |
 | --------- | ------------------------ | ------------- | ------------- | -------------------------------- | ----------------------- | ------------------------- |
-|           | nearest                  | edge          | border        | replicate                        | repeat                  | ` a  a | a b c d |  d  d` |
-|           | constant, grid-constant  | constant      | constant      | zeros                            | zero                    | ` 0  0 | a b c d |  0  0` |
-| dct1      | mirror                   | reflect       | reflect       | reflection (align_corners=False) |                         | ` c  b | a b c d |  c  b` |
-| dct2      | reflect, grid-mirror     | symmetric     |               | reflection (align_corners=True)  | neumann                 | ` b  a | a b c d |  d  c` |
-| dst1      |                          |               |               |                                  | antimirror              | `-a  0 | a b c d |  0 -d` |
-| dst2      |                          |               |               |                                  | antireflect, dirichlet  | `-b -a | a b c d | -d -c` |
-| dft       | grid-wrap                | wrap          | circular      |                                  | circulant               | ` c  d | a b c d |  a  b` |
-|           | wrap                     |               |               |                                  |                         | ` c  d | a b c d |  b  c` |
+|           | nearest                  | edge          | border        | replicate                        | repeat                  | <code> a  a &#124; a b c d &#124;  d  d</code> |
+|           | constant, grid-constant  | constant      | constant      | zeros                            | zero                    | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
+| dct1      | mirror                   | reflect       | reflect       | reflection (align_corners=False) |                         | <code> c  b &#124; a b c d &#124;  c  b</code> |
+| dct2      | reflect, grid-mirror     | symmetric     |               | reflection (align_corners=True)  | neumann                 | <code> b  a &#124; a b c d &#124;  d  c</code> |
+| dst1      |                          |               |               |                                  | antimirror              | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
+| dst2      |                          |               |               |                                  | antireflect, dirichlet  | <code>-b -a &#124; a b c d &#124; -d -c</code> |
+| dft       | grid-wrap                | wrap          | circular      |                                  | circulant               | <code> c  d &#124; a b c d &#124;  a  b</code> |
+|           | wrap                     |               |               |                                  |                         | <code> c  d &#124; a b c d &#124;  b  c</code> |
 |           |                          | linear_ramp   |
 |           |                          | minimum, maximum, mean, median |
 
@@ -55,7 +55,7 @@ different conventions. In case of inconsistency, we assume that
 We also introduce an internal `Enum` type that maps of all these names
 to a fixed set of integers:
 
-```
+```python
 class BoundType(Enum):
     zero = zeros = constant = gridconstant = 0
     replicate = repeat = nearest = border = edge = 1
