@@ -1,0 +1,33 @@
+{% set name = "torch-bounds" %}
+{% set version = "0.2.4" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 6c230647fb9f290eca14e31b34571061430d80c6228c5cc4edce1e3239d59a0a
+
+build:
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv
+  noarch: python
+
+requirements:
+  host:
+    - python >=3.6
+    - pip
+  run:
+    - python >=3.6
+    - pytorch >=1.3
+
+test:
+  imports:
+    - bounds
+
+about:
+  home: https://github.com/balbasty/torch-bounds
+  license: MIT
+  summary: Boundary conditions and real transforms in PyTorch
+  dev_url: https://github.com/balbasty/torch-bounds
