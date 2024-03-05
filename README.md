@@ -26,18 +26,18 @@ pip install torch-bounds
 There is no common convention across python packages to name boundary
 conditions. This table contains an extensive list of aliases:
 
-| Fourier   | SciPy `ndimage`          | Numpy `pad`   | PyTorch `pad` | PyTorch `grid_sample`            | Other                   | Description               |
-| --------- | ------------------------ | ------------- | ------------- | -------------------------------- | ----------------------- | ------------------------- |
-|           | nearest                  | edge          | border        | replicate                        | repeat                  | <code> a  a &#124; a b c d &#124;  d  d</code> |
-|           | constant, grid-constant  | constant      | constant      | zeros                            | zero                    | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
-| dct1      | mirror                   | reflect       | reflect       | reflection (align_corners=False) |                         | <code> c  b &#124; a b c d &#124;  c  b</code> |
-| dct2      | reflect, grid-mirror     | symmetric     |               | reflection (align_corners=True)  | neumann                 | <code> b  a &#124; a b c d &#124;  d  c</code> |
-| dst1      |                          |               |               |                                  | antimirror              | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
-| dst2      |                          |               |               |                                  | antireflect, dirichlet  | <code>-b -a &#124; a b c d &#124; -d -c</code> |
-| dft       | grid-wrap                | wrap          | circular      |                                  | circulant               | <code> c  d &#124; a b c d &#124;  a  b</code> |
-|           | wrap                     |               |               |                                  |                         | <code> c  d &#124; a b c d &#124;  b  c</code> |
+| Fourier   | SciPy `ndimage`          | Numpy `pad`   | PyTorch `pad` | PyTorch `grid_sample`| Other                   | Description               |
+| --------- | ------------------------ | ------------- | ------------- | -------------------- | ----------------------- | ------------------------- |
+|           | nearest                  | edge          | border        | replicate            | repeat                  | <code> a  a &#124; a b c d &#124;  d  d</code> |
+|           | constant, <br />grid-constant  | constant      | constant      | zeros                | zero                    | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
+| dct1      | mirror                   | reflect       | reflect       | reflection  <br />(`False`) |                         | <code> c  b &#124; a b c d &#124;  c  b</code> |
+| dct2      | reflect,  <br />grid-mirror     | symmetric     |               | reflection  <br />(`True`)  | neumann                 | <code> b  a &#124; a b c d &#124;  d  c</code> |
+| dst1      |                          |               |               |                      | antimirror              | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
+| dst2      |                          |               |               |                      | antireflect,  <br />dirichlet  | <code>-b -a &#124; a b c d &#124; -d -c</code> |
+| dft       | grid-wrap                | wrap          | circular      |                      | circulant               | <code> c  d &#124; a b c d &#124;  a  b</code> |
+|           | wrap                     |               |               |                      |                         | <code> c  d &#124; a b c d &#124;  b  c</code> |
 |           |                          | linear_ramp   |
-|           |                          | minimum, maximum, mean, median |
+|           |                          | minimum,  <br />maximum,  <br />mean,  <br />median |
 
 Some of these conventions are inconsistant with each other. For example
 `"wrap"` in `scipy.ndimage` is different from `"wrap"` in `numpy.pad`,
