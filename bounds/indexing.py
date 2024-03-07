@@ -260,6 +260,7 @@ def dst1_script(i, n: int) -> Tuple[Tensor, Tensor]:
     ii = torch.where(i < 0, 2*n - i, i).remainder(n2).remainder(n + 1)
     x = (ii != n).to(torch.int8)
     #   +/- ones
+    ii = torch.where(i < 0, n - 1 - i, i)
     x = torch.where(floor_div_int(ii, n + 1).remainder(2) >= 1, -x, x)
 
     # index
