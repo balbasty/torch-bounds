@@ -51,6 +51,7 @@ __all__ = [
 import torch
 from torch import Tensor
 from typing import Tuple
+from .utils import floor_div_int
 
 
 def nocheck(i, n):
@@ -259,7 +260,7 @@ def dst1_script(i, n: int) -> Tuple[Tensor, Tensor]:
     ii = torch.where(i < 0, 2*n - i, i).remainder(n2).remainder(n + 1)
     x = (ii != n).to(torch.int8)
     #   +/- ones
-    x = torch.where((i / (n + 1)).remainder(2) >= 1, -x, x)
+    x = torch.where(floor_div_int(ii, n + 1).remainder(2) >= 1, -x, x)
 
     # index
     i = torch.where(i < 0, -2 - i, i)
@@ -301,7 +302,7 @@ def dst2_int(i: int, n: int) -> Tuple[int, int]:
 @torch.jit.script
 def dst2_script(i, n: int) -> Tuple[Tensor, Tensor]:
     x = torch.ones([1], dtype=torch.int8, device=i.device)
-    x = torch.where((i / n).remainder(2) >= 1, -x, x)
+    x = torch.where(floor_div_int(i, n).remainder(2) >= 1, -x, x)
     return dct2_script(i, n)[0], x
 
 
