@@ -30,7 +30,9 @@ def test_gradcheck_dct(type, norm, size):
     dat = torch.randn([size], dtype=dtype)
     assert torch.allclose(
         dct(dat, norm=norm, type=type),
-        torch.as_tensor(scipy_dct(dat, norm=scipy_norm(norm), type=type))
+        torch.as_tensor(
+            scipy_dct(dat.numpy(), norm=scipy_norm(norm), type=type)
+        )
     )
 
 
@@ -42,7 +44,9 @@ def test_gradcheck_idct(type, norm, size):
     dat = torch.randn([size], dtype=dtype)
     assert torch.allclose(
         idct(dat, norm=norm, type=type),
-        torch.as_tensor(scipy_idct(dat, norm=scipy_norm(norm), type=type))
+        torch.as_tensor(
+            scipy_idct(dat.numpy(), norm=scipy_norm(norm), type=type)
+        )
     )
 
 
@@ -54,7 +58,9 @@ def test_gradcheck_dst(type, norm, size):
     dat = torch.randn([size], dtype=dtype)
     assert torch.allclose(
         dst(dat, norm=norm, type=type),
-        torch.as_tensor(scipy_dst(dat, norm=scipy_norm(norm), type=type))
+        torch.as_tensor(
+            scipy_dst(dat.numpy(), norm=scipy_norm(norm), type=type)
+        )
     )
 
 
@@ -66,5 +72,7 @@ def test_gradcheck_idst(type, norm, size):
     dat = torch.randn([size], dtype=dtype)
     assert torch.allclose(
         idst(dat, norm=norm, type=type),
-        torch.as_tensor(scipy_idst(dat, norm=scipy_norm(norm), type=type))
+        torch.as_tensor(
+            scipy_idst(dat.numpy(), norm=scipy_norm(norm), type=type)
+        )
     )

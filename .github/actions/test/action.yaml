@@ -35,5 +35,4 @@ runs:
       shell: bash -el {0}
       run: |
         pip install ".[test]"
-        python -c "import bounds; print(bounds.__version__)"
         pytest
