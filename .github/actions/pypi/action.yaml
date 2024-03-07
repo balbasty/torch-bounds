@@ -32,11 +32,11 @@ runs:
     - name: Install dependencies for building package
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine versioneer[toml]
+        pip install build setuptools wheel twine versioneer[toml]
       shell: bash
     - name: Build a binary wheel and a source tarball
       run: |
-        python setup.py sdist bdist_wheel
+        python -m build
       shell: bash
     - name: Publish distribution 📦 to Test PyPI
       if: ${{ contains(inputs.publish, 'test') }}
