@@ -12,7 +12,7 @@ authors = [
 ]
 description = "Boundary conditions and real transforms in PyTorch"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.6"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
