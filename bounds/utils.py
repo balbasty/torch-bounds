@@ -1,5 +1,6 @@
 import os
 import torch
+from torch import Tensor
 from types import GeneratorType as generator
 from typing import List, Any, Optional
 
@@ -151,9 +152,6 @@ else:
         return (x / y).to(int_dtype).to(x.dtype)
 
 
-TensorList = List[torch.Tensor]
-
-
 if torch_version('>=', (1, 10)):
     # torch >= 1.10
     # -> use `indexing` keyword
@@ -162,22 +160,22 @@ if torch_version('>=', (1, 10)):
         # JIT deactivated -> torch.meshgrid takes an unpacked list of tensors
 
         @torch.jit.script
-        def meshgrid_list_ij(tensors: TensorList) -> TensorList:
+        def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(*tensors, indexing='ij'))
 
         @torch.jit.script
-        def meshgrid_list_xy(tensors: TensorList) -> TensorList:
+        def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(*tensors, indexing='xy'))
 
     else:
         # JIT activated -> torch.meshgrid takes a packed list of tensors
 
         @torch.jit.script
-        def meshgrid_list_ij(tensors: TensorList) -> TensorList:
+        def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors, indexing='ij'))
 
         @torch.jit.script
-        def meshgrid_list_xy(tensors: TensorList) -> TensorList:
+        def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors, indexing='xy'))
 
 else:
@@ -188,11 +186,11 @@ else:
         # JIT deactivated -> torch.meshgrid takes an unpacked list of tensors
 
         @torch.jit.script
-        def meshgrid_list_ij(tensors: TensorList) -> TensorList:
+        def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors))
 
         @torch.jit.script
-        def meshgrid_list_xy(tensors: TensorList) -> TensorList:
+        def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             grid = list(torch.meshgrid(*tensors))
             if len(grid) > 1:
                 grid[0] = grid[0].transpose(0, 1)
@@ -203,11 +201,11 @@ else:
         # JIT activated -> torch.meshgrid takes a packed list of tensors
 
         @torch.jit.script
-        def meshgrid_list_ij(tensors: TensorList) -> TensorList:
+        def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors))
 
         @torch.jit.script
-        def meshgrid_list_xy(tensors: TensorList) -> TensorList:
+        def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             grid = list(torch.meshgrid(tensors))
             if len(grid) > 1:
                 grid[0] = grid[0].transpose(0, 1)
@@ -263,7 +261,7 @@ def cumprod_list_int(x: List[int], reverse: bool = False,
 
 
 @torch.jit.script
-def sub2ind_list(subs: TensorList, shape: List[int]):
+def sub2ind_list(subs: List[Tensor], shape: List[int]):
     """Convert sub indices (i, j, k) into linear indices.
 
     The rightmost dimension is the most rapidly changing one
