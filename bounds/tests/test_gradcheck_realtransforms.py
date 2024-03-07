@@ -1,8 +1,12 @@
 import torch
 from torch.autograd import gradcheck
-from bounds import dct, dst, idct, idst
 import pytest
 import inspect
+from ..utils import torch_version
+torch_has_fft = torch_version('>=', (1, 8))
+
+if torch_has_fft:
+    from bounds import dct, dst, idct, idst
 
 # global parameters
 dtype = torch.double        # data type (double advised to check gradients)
@@ -48,6 +52,7 @@ def init_device(device):
     return torch.device(device)
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("device", devices)
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
@@ -60,6 +65,7 @@ def test_gradcheck_dct(device, type, norm, size):
     assert gradcheck(dct, (dat, -1, norm, type), **kwargs)
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("device", devices)
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
@@ -72,6 +78,7 @@ def test_gradcheck_idct(device, type, norm, size):
     assert gradcheck(idct, (dat, -1, norm, type), **kwargs)
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("device", devices)
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
@@ -84,6 +91,7 @@ def test_gradcheck_dst(device, type, norm, size):
     assert gradcheck(dst, (dat, -1, norm, type), **kwargs)
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("device", devices)
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)

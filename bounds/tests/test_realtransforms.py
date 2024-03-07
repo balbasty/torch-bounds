@@ -1,11 +1,16 @@
 import torch
 import scipy
-from bounds import dct, dst, idct, idst
-from scipy.fft import (
-    dct as scipy_dct, idct as scipy_idct,
-    dst as scipy_dst, idst as scipy_idst,
-)
 import pytest
+from ..utils import torch_version
+torch_has_fft = torch_version('>=', (1, 8))
+
+if torch_has_fft:
+    from bounds import dct, dst, idct, idst
+    from scipy.fft import (
+        dct as scipy_dct, idct as scipy_idct,
+        dst as scipy_dst, idst as scipy_idst,
+    )
+
 
 dtype = torch.double        # data type (double advised to check gradients)
 types = (1, 2, 3)
@@ -22,6 +27,7 @@ else:
         return "ortho_scipy" if norm == "ortho" else norm
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
 @pytest.mark.parametrize("size", sizes)
@@ -36,6 +42,7 @@ def test_gradcheck_dct(type, norm, size):
     )
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
 @pytest.mark.parametrize("size", sizes)
@@ -50,6 +57,7 @@ def test_gradcheck_idct(type, norm, size):
     )
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
 @pytest.mark.parametrize("size", sizes)
@@ -64,6 +72,7 @@ def test_gradcheck_dst(type, norm, size):
     )
 
 
+@pytest.mark.skipif(not torch_has_fft, reason="requires pytorch 1.8")
 @pytest.mark.parametrize("type", types)
 @pytest.mark.parametrize("norm", norms)
 @pytest.mark.parametrize("size", sizes)
