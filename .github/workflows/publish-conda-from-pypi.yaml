@@ -10,6 +10,7 @@ on:
         description: 'Dry run'
         required: false
         default: false
+        type: boolean
       python-version:
         description: 'Python version'
         required: false

@@ -17,7 +17,6 @@ inputs:
     required: false
     default: 3.7
   dry-run:
-    type: boolean
     description: 'Dry run'
     required: false
     default: false
@@ -124,7 +123,7 @@ runs:
       OPT+=",${V}"
       done
       OPT="{python: [${OPT:1}]}"
-      conda mambabuild --variants "$OPT" -c pytorch --croot .
+      conda mambabuild --variants "$OPT" -c pytorch --croot . .
   - name: Convert
     shell: bash -el {0}
     env:
