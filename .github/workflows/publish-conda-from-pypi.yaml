@@ -1,0 +1,32 @@
+name: Build conda package from PyPI release & publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag'
+        required: true
+      dry:
+        description: 'Dry run'
+        required: false
+        default: false
+      python-version:
+        description: 'Python version'
+        required: false
+        default: '3.7'
+      conda-platforms:
+        description: 'Target platforms'
+        required: false
+        default: 'noarch'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/conda-from-pypi
+        with:
+          tag: ${{ inputs.tag }}
+          platforms: ${{ inputs.conda-platforms }}
+          dry-run: ${{ inputs.dry }}
+          password: ${{ secrets.ANACONDA_TOKEN }}
+          python-version: ${{ inputs.python-version }}
