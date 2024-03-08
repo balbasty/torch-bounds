@@ -1,5 +1,5 @@
 {% set name = "torch-bounds" %}
-{% set version = "0.2.4" %}
+{% set version = "0.1.0" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 6c230647fb9f290eca14e31b34571061430d80c6228c5cc4edce1e3239d59a0a
+  sha256: f61f1ece40f76cb929d35f6ff1bd2b192e259ccb7dc9dfc73b94122b4c540686
 
 build:
   number: 0

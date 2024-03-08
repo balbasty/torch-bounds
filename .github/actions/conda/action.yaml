@@ -21,7 +21,7 @@ inputs:
     description: 'Override'
     required: false
     default: true
-  password: 
+  password:
     required: true
 runs:
   using: "composite"
@@ -73,7 +73,7 @@ runs:
   - name: "Publish (dry run: ${{ inputs.dry-run }})"
     if: inputs.dry-run == 'false'
     shell: bash -el {0}
-    env: 
+    env:
       OVERRIDE: ${{ inputs.override }}
       PLATFORMS: ${{ inputs.platforms }}
       ANACONDA_API_TOKEN: ${{ inputs.password }}
