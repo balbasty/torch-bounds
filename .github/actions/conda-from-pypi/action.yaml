@@ -17,6 +17,7 @@ inputs:
     required: false
     default: 3.7
   dry-run:
+    type: boolean
     description: 'Dry run'
     required: false
     default: false
