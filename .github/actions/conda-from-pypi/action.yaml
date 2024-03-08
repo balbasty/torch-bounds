@@ -78,8 +78,6 @@ runs:
       cat >meta.yaml <<EOL
       {% set name = "$PACKAGE" %}
       {% set version = "$TAG" %}
-      {% set summary = "$PYPI_SUMMARY" %}
-      {% set sha256 = "$PYPI_SHA256" %}
 
       package:
         name: "{{ name|lower }}"
@@ -87,7 +85,7 @@ runs:
 
       source:
         url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-        sha256: "{{ sha256 }}"
+        sha256: "$PYPI_SHA256"
 
       build:
         number: 0
@@ -109,7 +107,7 @@ runs:
       about:
         home: https://github.com/balbasty/{{ name }}
         license: MIT
-        summary: "{{ summary }}"
+        summary: "$PYPI_SUMMARY"
         dev_url: https://github.com/balbasty/{{ name }}
       EOL
   - name: Build
