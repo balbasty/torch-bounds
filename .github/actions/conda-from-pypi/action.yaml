@@ -52,29 +52,33 @@ runs:
       TAG: ${{ inputs.tag }}
       PACKAGE: ${{ inputs.package }}
     run: |
-      python -c \
-      '
-      import os
-      import requests
-      tag = os.environ["TAG"]
-      package = os.environ["PACKAGE"]
-      json = requests.get(f"https://pypi.org/pypi/{package}/{tag}/json").json()
-      summary = json["info"].get("summary", "")
-      with open(os.environ["GITHUB_ENV"], "a") as f:
-        f.write(f"PYPI_SUMMARY={summary}\n")
-      for url in json["urls"]:
-          if url["packagetype"] == "sdist":
-              sha256 = url["digests"]["sha256"]
-              with open(os.environ["GITHUB_ENV"], "a") as f:
-                f.write(f"PYPI_SHA256={sha256}\n")
-              break
-      '
+python -c \
+'
+import os
+import requests
+tag = os.environ["TAG"]
+package = os.environ["PACKAGE"]
+json = requests.get(f"https://pypi.org/pypi/{package}/{tag}/json").json()
+summary = json["info"].get("summary", "")
+with open(os.environ["GITHUB_ENV"], "a") as f:
+  f.write(f"PYPI_SUMMARY={summary}\n")
+for url in json["urls"]:
+    if url["packagetype"] == "sdist":
+        source = url["url"]
+        sha256 = url["digests"]["sha256"]
+        with open(os.environ["GITHUB_ENV"], "a") as f:
+          f.write(f"PYPI_SHA256={sha256}\n")
+          f.write(f"PYPI_SOURCE={source}\n")
+        break
+'
   - name: Create meta.yaml
     shell: bash
     env:
       TAG: ${{ inputs.tag }}
       PACKAGE: ${{ inputs.package }}
     run: |
+      echo "PYPI_SHA256=${PYPI_SHA256}"
+      echo "PYPI_SUMMARY=${PYPI_SUMMARY}"
       cat >meta.yaml <<EOL
       {% set name = "$PACKAGE" %}
       {% set version = "$TAG" %}
@@ -84,7 +88,7 @@ runs:
         version: "{{ version }}"
 
       source:
-        url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+        url: $PYPI_SOURCE
         sha256: $PYPI_SHA256
 
       build:
