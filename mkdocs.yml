@@ -11,7 +11,7 @@ theme:
     accent: deep-orange
   icon:
     repo: fontawesome/brands/github
-    logo: fontawesome/solid/fire:
+    logo: fontawesome/solid/fire
   features:
     - navigation.tabs
     - navigation.tabs.sticky
@@ -72,6 +72,9 @@ extra_javascript:
 nav:
 - Home: index.md
 - Installation: install.md
+- Notebooks:
+  - Padding: notebooks/pad.ipynb
+  - Real Transforms: notebooks/realtransforms.ipynb
 - Padding: api/padding.md
 - Indexing: api/indexing.md
 - Boundary Types: api/types.md

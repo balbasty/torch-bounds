@@ -1,6 +1,6 @@
 """
-This module reimplements `pad` and `roll` with a larger set of boundary
-conditions.
+This module reimplements [`torch.nn.functional.pad`][] and [`torch.roll`][]
+with a larger set of boundary conditions.
 
 Functions
 ---------
@@ -72,20 +72,20 @@ def pad(
     ----------
     inp : tensor
         Input tensor
-    padsize : [sequence of] int
+    padsize : SequenceOrScalar[int]
         Amount of padding in each dimension.
-    mode : [sequence of] bound_like
+    mode : SequenceOrScalar[BoundLike]
         Padding mode
     value : scalar
-        Value to pad with in mode 'constant'.
+        Value to pad with in mode `'constant'`.
     side : "{'pre', 'post', 'both', None}"
-        Use padsize to pad on left side ('pre'), right side ('post') or
-        both sides ('both'). If None, the padding side for the left and
+        Use padsize to pad on left side (`'pre'`), right side (`'post'`) or
+        both sides (`'both'`). If `None`, the padding side for the left and
         right sides should be provided in alternate order.
 
     Returns
     -------
-    tensor
+    out : tensor
         Padded tensor.
 
     """
@@ -175,12 +175,12 @@ def ensure_shape(
     ----------
     inp : tensor
         Input tensor
-    shape : [sequence of] int
+    shape : SequenceOrScalar[int]
         Output shape
-    mode : "{'constant', 'replicate', 'reflect', 'mirror', 'circular'}"
+    mode : SequenceOrScalar[BoundLike]
         Boundary mode
     value : scalar, default=0
-        Value for mode 'constant'
+        Value for mode `'constant'`
     side : "{'pre', 'post', 'both'}"
         Side to crop/pad
 
@@ -225,7 +225,12 @@ def ensure_shape(
     return inp
 
 
-def roll(inp, shifts=1, dims=None, bound='circular'):
+def roll(
+    inp: Tensor,
+    shifts: SequenceOrScalar[int] = 1,
+    dims: Optional[SequenceOrScalar[int]] = None,
+    bound: SequenceOrScalar[BoundLike] = 'circular'
+):
     r"""Like `torch.roll`, but with any boundary condition
 
     !!! warning
@@ -236,14 +241,14 @@ def roll(inp, shifts=1, dims=None, bound='circular'):
     ----------
     inp : tensor
         Input
-    shifts : [sequence of] int
+    shifts : SequenceOrScalar[int]
         Amount by which to roll.
         Positive shifts to the right, negative to the left.
-    dims : [sequence of] int
+    dims : SequenceOrScalar[int]
         Dimensions to roll.
         By default, shifts apply to all dimensions if a scalar,
         or to the last N if a sequence.
-    bound : "{'constant', 'replicate', 'reflect', 'mirror', 'circular'}"
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition
 
     Returns

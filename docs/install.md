@@ -1,9 +1,19 @@
-1. Install with `pip`
+---
+hide:
+  - navigation
+---
+
+## With `conda`
+```shell
+conda install torch-bounds -c balbasty -c pytorch
+```
+
+## With `pip`
 ```shell
 pip install torch-bounds
 ```
 
-2. Import in python
+## Import in python
 ```python
 import bounds
 ```
