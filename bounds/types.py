@@ -69,7 +69,7 @@ class BoundType(Enum):
     nocheck = -1
 
 
-T = TypeVar
+T = TypeVar('T')
 
 SequenceOrScalar = Union[T, Sequence[T]]
 """Either an element or type `T`, or a sequence of elements of type `T`."""
