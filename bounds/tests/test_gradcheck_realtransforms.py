@@ -2,7 +2,7 @@ import torch
 from torch.autograd import gradcheck
 import pytest
 import inspect
-from ..utils import torch_version
+from .._utils import torch_version
 torch_has_fft = torch_version('>=', (1, 8))
 
 if torch_has_fft:

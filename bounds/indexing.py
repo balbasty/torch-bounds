@@ -51,7 +51,7 @@ __all__ = [
 import torch
 from torch import Tensor
 from typing import Tuple
-from .utils import floor_div_int
+from ._utils import floor_div_int
 
 
 def nocheck(i, n):

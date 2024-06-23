@@ -1,0 +1,7 @@
+mkdocs
+mkdocs-material
+mkdocs-jupyter
+mkdocs-autorefs
+mkdocstrings[python]>=0.18
+mkdocstrings-python-xref
+markdown-grid-tables
