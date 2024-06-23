@@ -46,6 +46,18 @@ class BoundType(Enum):
     """
     An Enum type that maps boundry modes of any convention to a
     unique set of values.
+
+    ```python
+    class BoundType(Enum):
+        zero = zeros = constant = gridconstant = 0
+        replicate = repeat = nearest = border = edge = 1
+        dct1 = mirror = 2
+        dct2 = reflect = reflection = gridmirror = neumann = 3
+        dst1 = antimirror = 4
+        dst2 = antireflect = dirichlet = 5
+        dft = fft = wrap = gridwrap = circular = circulant = 6
+        nocheck = -1
+    ```
     """
     zero = zeros = constant = gridconstant = 0
     replicate = repeat = nearest = border = edge = 1
@@ -76,8 +88,8 @@ Most conventions are handled (numpy, scipy, torch, see below). Can be one of:
 5. `dst2`, `antireflect` or `dirichlet`;
 6. `dft`, `fft`, `wrap`, `gridwrap`, `circular` or `circulant`.
 
-Each of these modes can be a `BoundType` value (e.g., `BoundType.mirror`),
-or its string representation (e.g., `"mirror"`).
+Each of these modes can be a [`BoundType`][bounds.types.BoundType] value
+(e.g., `BoundType.mirror`), or its string representation (e.g., `"mirror"`).
 
 The aliases `dft`, `dct1`, `dct2`, `dst1` and `dst2` exist because these
 boundary modes correspond to the implicit boundary conditions of each of
@@ -91,36 +103,36 @@ The reason why so many aliases are supported is that there is no common
 convention across python packages to name boundary conditions.
 This table contains an extensive list of aliases:
 
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| Fourier | SciPy `ndimage` | Numpy `pad` | PyTorch `pad` | PyTorch `grid_sample` | Other        | Description                                    |
-+=========+=================+=============+===============+=======================+==============+================================================+
-|         | nearest         | edge        | border        | replicate             | repeat       | <code> a  a &#124; a b c d &#124;  d  d</code> |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-|         | constant,       | constant    | constant      | zeros                 | zero         | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
-|         | grid-constant   |             |               |                       |              |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| dct1    | mirror          | reflect     | reflect       | reflection            |              | <code> c  b &#124; a b c d &#124;  c  b</code> |
-|         |                 |             |               | (`False`)             |              |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| dct2    | reflect,        | symmetric   |               | reflection            | neumann      | <code> b  a &#124; a b c d &#124;  d  c</code> |
-|         | grid-mirror     |             |               | (`True`)              |              |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| dst1    |                 |             |               |                       | antimirror   | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| dst2    |                 |             |               |                       | antireflect, | <code>-b -a &#124; a b c d &#124; -d -c</code> |
-|         |                 |             |               |                       | dirichlet    |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-| dft     | grid-wrap       | wrap        | circular      |                       | circulant    | <code> c  d &#124; a b c d &#124;  a  b</code> |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-|         | wrap            |             |               |                       |              | <code> c  d &#124; a b c d &#124;  b  c</code> |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-|         |                 | linear_ramp |               |                       |              |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
-|         |                 | minimum,    |               |                       |              |                                                |
-|         |                 | maximum,    |               |                       |              |                                                |
-|         |                 | mean,       |               |                       |              |                                                |
-|         |                 | median      |               |                       |              |                                                |
-+---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| Fourier | SciPy `ndimage` | Numpy `pad`    | PyTorch `pad` | PyTorch `grid_sample` | Other        | Description                                    |
++=========+=================+================+===============+=======================+==============+================================================+
+|         | nearest         | edge           | border        | replicate             | repeat       | <code> a  a &#124; a b c d &#124;  d  d</code> |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         | constant,<br /> | constant       | constant      | zeros                 | zero         | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
+|         | grid-constant   |                |               |                       |              |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dct1    | mirror          | reflect        | reflect       | reflection<br />      |              | <code> c  b &#124; a b c d &#124;  c  b</code> |
+|         |                 |                |               | (`False`)             |              |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dct2    | reflect,<br />  | symmetric      |               | reflection<br />      | neumann      | <code> b  a &#124; a b c d &#124;  d  c</code> |
+|         | grid-mirror     |                |               | (`True`)              |              |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dst1    |                 |                |               |                       | antimirror   | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dst2    |                 |                |               |                       | antireflect, | <code>-b -a &#124; a b c d &#124; -d -c</code> |
+|         |                 |                |               |                       | dirichlet    |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dft     | grid-wrap       | wrap           | circular      |                       | circulant    | <code> c  d &#124; a b c d &#124;  a  b</code> |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         | wrap            |                |               |                       |              | <code> c  d &#124; a b c d &#124;  b  c</code> |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         |                 | linear_ramp    |               |                       |              |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         |                 | minimum,<br /> |               |                       |              |                                                |
+|         |                 | maximum,<br /> |               |                       |              |                                                |
+|         |                 | mean,<br />    |               |                       |              |                                                |
+|         |                 | median         |               |                       |              |                                                |
++---------+-----------------+----------------+---------------+-----------------------+--------------+------------------------------------------------+
 
 Some of these conventions are inconsistant with each other. For example
 `"wrap"` in `scipy.ndimage` is different from `"wrap"` in `numpy.pad`,
@@ -168,12 +180,12 @@ def to_enum(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[BoundType]:
 
     Parameters
     ----------
-    bound : [list of] bound_like
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition in any convention
 
     Returns
     -------
-    bound : [list of] BoundType
+    bound : SequenceOrScalar[BoundType]
         Boundary condition
 
     """
@@ -220,12 +232,12 @@ def to_int(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[int]:
 
     Parameters
     ----------
-    bound : [list of] str
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition in any convention
 
     Returns
     -------
-    bound : [list of] {0..6}
+    bound : SequenceOrScalar[{0..6}]
         Boundary condition
 
     """
@@ -248,12 +260,12 @@ def to_fourier(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
 
     Parameters
     ----------
-    bound : [list of] bound_like
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition in any convention
 
     Returns
     -------
-    bound : [list of] {'replicate', 'zero', 'dct2', 'dct1', 'dst2', 'dst1', 'dft'}
+    bound : SequenceOrScalar[{'replicate', 'zero', 'dct2', 'dct1', 'dst2', 'dst1', 'dft'}]
         Boundary condition in terms of discrete transforms
 
     """  # noqa: E501
@@ -300,15 +312,15 @@ def to_scipy(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
 
     Parameters
     ----------
-    bound : [list of] bound_like
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition in any convention
 
     Returns
     -------
-    bound : [list of] {'border', 'constant', 'reflect', 'mirror', 'wrap'}
+    bound : SequenceOrScalar[{'border', 'constant', 'reflect', 'mirror', 'wrap'}]
         Boundary condition in SciPy's convention
 
-    """
+    """  # noqa: E501
     intype = type(bound)
     if not isinstance(bound, (list, tuple)):
         bound = [bound]
@@ -352,12 +364,12 @@ def to_torch(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
 
     Parameters
     ----------
-    bound : [list of] bound_like
+    bound : SequenceOrScalar[BoundLike]
         Boundary condition in any convention
 
     Returns
     -------
-    bound : [list of] ({'nearest', 'zero', 'reflection'}, bool)
+    bound : SequenceOrScalar[({'nearest', 'zero', 'reflection'}, bool)]
         The first element is the boundary condition in PyTorchs's
         convention, and the second element is the value of `align_corners`.
 

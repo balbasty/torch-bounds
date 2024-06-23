@@ -5,33 +5,33 @@ according to some boundary condition.
 Functions
 ---------
 replicate
-    Apply replicate (nearest/border) boundary conditions to an index (not jit).
+    Apply replicate boundary conditions to an index.
     **Aliases:**
     [`border`][bounds.indexing.border],
     [`nearest`][bounds.indexing.nearest],
     [`repeat`][bounds.indexing.repeat],
     [`edge`][bounds.indexing.edge].
 dft
-    Apply DFT (circulant/wrap) boundary conditions to an index (not jit).
+    Apply DFT boundary conditions to an index.
     **Aliases:**
     [`wrap`][bounds.indexing.wrap],
     [`gridwrap`][bounds.indexing.gridwrap],
     [`circular`][bounds.indexing.circular],
     [`circulant`][bounds.indexing.circulant].
 dct1
-    Apply DCT-I (mirror) boundary conditions to an index (not jit).
+    Apply DCT-I boundary conditions to an index.
     **Alias:** [`mirror`][bounds.indexing.mirror]
 dct2
-    Apply DCT-II (reflect) boundary conditions to an index (not jit).
+    Apply DCT-II boundary conditions to an index.
     **Aliases**:
     [`reflect`][bounds.indexing.reflect],
     [`gridmirror`][bounds.indexing.gridmirror],
     [`neumann`][bounds.indexing.neumann].
 dst1
-    Apply DST-I (antimirror) boundary conditions to an index (not jit).
+    Apply DST-I boundary conditions to an index.
     **Alias:** [`antimirror`][bounds.indexing.antimirror]
 dst2
-    Apply DST-II (antireflect/wrap) boundary conditions to an index (not jit).
+    Apply DST-II boundary conditions to an index.
     **Aliases**:
     [`antireflect`][bounds.indexing.antireflect],
     [`dirichlet`][bounds.indexing.dirichlet].
@@ -63,7 +63,9 @@ def replicate(i, n):
     """Apply replicate (nearest/border) boundary conditions to an index
 
     !!! info "Aliases"
-        `border`, `nearest`, `repeat`
+        [`border`][bounds.indexing.border],
+        [`nearest`][bounds.indexing.nearest],
+        [`repeat`][bounds.indexing.repeat]
 
     Parameters
     ----------
@@ -97,7 +99,8 @@ def dft(i, n):
     """Apply DFT (circulant/wrap) boundary conditions to an index
 
     !!! info "Aliases"
-        `wrap`, `circular`
+        [`wrap`][bounds.indexing.wrap],
+        [`circular`][bounds.indexing.circular]
 
     Parameters
     ----------
@@ -130,7 +133,8 @@ def dct2(i, n):
     """Apply DCT-II (reflect) boundary conditions to an index
 
     !!! info "Aliases"
-        `reflect`, `neumann`
+        [`reflect`][bounds.indexing.reflect],
+        [`neumann`][bounds.indexing.neumann]
 
     Parameters
     ----------
@@ -171,7 +175,7 @@ def dct1(i, n):
     """Apply DCT-I (mirror) boundary conditions to an index
 
     !!! info "Aliases"
-        `mirror`
+        [`mirror`][bounds.indexing.mirror]
 
     Parameters
     ----------
@@ -214,7 +218,7 @@ def dst1(i, n):
     """Apply DST-I (antimirror) boundary conditions to an index
 
     !!! info "Aliases"
-        `antimirror`
+        [`antimirror`][bounds.indexing.antimirror]
 
     Parameters
     ----------
@@ -275,7 +279,8 @@ def dst2(i, n):
     """Apply DST-II (antireflect) boundary conditions to an index
 
     !!! info "Aliases"
-        `antireflect`, `dirichlet`
+        [`antireflect`][bounds.indexing.antireflect],
+        [`dirichlet`][bounds.indexing.dirichlet]
 
     Parameters
     ----------
@@ -308,8 +313,19 @@ def dst2_script(i, n: int) -> Tuple[Tensor, Tensor]:
 
 
 nearest = border = repeat = edge = replicate
+"""Alias for [`replicate`][bounds.indexing.replicate]"""
+
 reflect = reflection = gridmirror = neumann = dct2
+"""Alias for [`dct2`][bounds.indexing.dct2]"""
+
 mirror = dct1
+"""Alias for [`dct1`][bounds.indexing.dct1]"""
+
 antireflect = dirichlet = dst2
+"""Alias for [`dst2`][bounds.indexing.dst2]"""
+
 antimirror = dst1
+"""Alias for [`dst1`][bounds.indexing.dst1]"""
+
 wrap = gridwrap = circular = circulant = circulant = dft
+"""Alias for [`dft`][bounds.indexing.dft]"""

@@ -1,3 +1,42 @@
+"""
+This module implements discrete transforms for real signals:
+
+- [Discrete Cosine Transform](https://w.wiki/AQEt)
+- [Discrete Sine Transform](https://w.wiki/ATnn)
+
+The implementations relies on the FFT under-the-hood, with memory-saving
+tricks (borrowed from [`cupy`](https://github.com/cupy/cupy)).
+
+The table belows lists all functions implemented in the module.
+In addition to these, wrappers of the form
+`#!python FUNCTYPE = partial(FUNC, type=TYPE)` are defined. For example:
+```python
+dct1 = partial(dct, type=1)
+idct1 = partial(idct, type=1)
+dctn1 = partial(dctn, type=1)
+```
+
+Functions
+---------
+dct
+    One-dimensional Discrete Cosine Transform (DCT)
+dst
+    One-dimensional Discrete Sine Transform (DST)
+idct
+    One-dimensional Inverse Discrete Cosine Transform (DCT)
+idst
+    One-dimensional Inverse Discrete Sine Transform (DST)
+dctn
+    N-dimensional Discrete Cosine Transform (IDCT)
+dstn
+    N-dimensional Discrete Sine Transform (IDST)
+idctn
+    N-dimensional Inverse Discrete Cosine Transform (IDCT)
+idstn
+    N-dimensional Inverse Discrete Sine Transform (IDST)
+```
+
+"""
 __all__ = [
     # 1D
     'dct', 'dst', 'idct', 'idst',
