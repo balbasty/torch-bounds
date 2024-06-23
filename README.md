@@ -9,25 +9,25 @@ to extrapolate a given discrete signal outside of its native bounds.
 
 Based on these additional boundary conditions, it implements:
 
-- [`pad`](https://torch-bounds.readthedocs.io/api/padding/#bounds.padding.pad): an extension of `torch.nn.functional.pad`
-- [`roll`](https://torch-bounds.readthedocs.io/api/padding/#bounds.padding.roll): an extension of `torch.roll`
+- [`pad`](https://torch-bounds.readthedocs.io/en/latest/api/padding/#bounds.padding.pad): an extension of `torch.nn.functional.pad`
+- [`roll`](https://torch-bounds.readthedocs.io/en/latest/api/padding/#bounds.padding.roll): an extension of `torch.roll`
 
 It also implements discrete
-[sine and cosine transforms](https://torch-bounds.readthedocs.io/api/realtransforms)
+[sine and cosine transforms](https://torch-bounds.readthedocs.io/en/latest/api/realtransforms)
 (variants 1, 2 and 3), using a trick similar to `cupy`.
 
 Finally, it implements additional utilities:
 
-- [`ensure_shape`](https://torch-bounds.readthedocs.io/api/padding/#bounds.padding.ensure_shape)
+- [`ensure_shape`](https://torch-bounds.readthedocs.io/en/latest/api/padding/#bounds.padding.ensure_shape)
   crops or pads a tensor (with any boundary condition) so that it matches a give shape.
-- [`indexing`](https://torch-bounds.readthedocs.io/api/indexing)
+- [`indexing`](https://torch-bounds.readthedocs.io/en/latest/api/indexing)
   is a module that implements functions to tranforms out-of-bounds
   coordinates into in-bounds coordinates according to any boundary condition.
-- [`types`](https://torch-bounds.readthedocs.io/api/types)
+- [`types`](https://torch-bounds.readthedocs.io/en/latest/api/types)
   is a module that defines names and aliases for different boundary conditions,
   as well as tools to convert between different naming conventions.
 
-### Documentation
+## Documentation
 
 See our [**documentation**](https://torch-bounds.readthedocs.io) and
 [**notebooks**](docs/notebooks/).
