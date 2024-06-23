@@ -2,7 +2,7 @@ import os
 import torch
 from torch import Tensor
 from types import GeneratorType as generator
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Union
 
 
 def ensure_list(x: Any, length: Optional[int] = None, crop: bool = True,
@@ -28,6 +28,55 @@ def ensure_list(x: Any, length: Optional[int] = None, crop: bool = True,
     if length and crop:
         x = x[:length]
     return x
+
+
+def make_vector(
+    input: Tensor,
+    n: Optional[int] = None,
+    crop: bool = True,
+    *args,
+    dtype: Optional[torch.dtype] = None,
+    device: Optional[Union[str, torch.device]] = None,
+    **kwargs
+):
+    """Ensure that the input is a (tensor) vector and pad/crop if necessary.
+
+    Parameters
+    ----------
+    input : scalar or sequence or generator
+        Input argument(s).
+    n : int, optional
+        Target length.
+    crop : bool, default=True
+        Crop input sequence if longer than `n`.
+    default : optional
+        Default value to pad with.
+        If not provided, replicate the last value.
+    dtype : torch.dtype, optional
+        Output data type.
+    device : torch.device, optional
+        Output device
+
+    Returns
+    -------
+    output : tensor
+        Output vector.
+
+    """
+    input = torch.as_tensor(input, dtype=dtype, device=device).flatten()
+    if n is None:
+        return input
+    if n is not None and input.numel() >= n:
+        return input[:n] if crop else input
+    if args:
+        default = args[0]
+    elif 'default' in kwargs:
+        default = kwargs['default']
+    else:
+        default = input[-1]
+    output = input.new_full([n], default)
+    output[:len(input)] = input
+    return output
 
 
 def prod(sequence, inplace=False):
@@ -128,7 +177,16 @@ if torch_version('>=', [1, 8]):
 elif torch_version('<', (1, 6)):
     floor_div = floor_div_int = torch.div
 else:
+    @torch.jit.script
+    def floor_div(x, y) -> torch.Tensor:
+        return torch.div(x, y, rounding_mode='floor')
+
+    @torch.jit.script
+    def floor_div_int(x, y: int) -> torch.Tensor:
+        return torch.div(x, y, rounding_mode='floor')
+
     floor_div = floor_div_int = torch.floor_divide
+
 #     @torch.jit.script
 #     def floor_div(x, y) -> torch.Tensor:
 #         return (x / y).floor_()

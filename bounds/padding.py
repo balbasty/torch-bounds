@@ -10,18 +10,25 @@ roll
     Roll a tensor
 ensure_shape
     Pad/crop a tensor so that it has a given shape
-make_vector
-    Ensure that the input is a (tensor) vector and pad/crop if necessary
 """
-__all__ = ['pad', 'roll', 'ensure_shape', 'make_vector']
+__all__ = ['pad', 'roll', 'ensure_shape']
 import torch
 import math
+from torch import Tensor
+from typing import Optional
+from numbers import Number
 from . import indexing
-from .types import to_fourier
-from .utils import prod, ensure_list, meshgrid_list_ij, sub2ind_list
+from .types import to_fourier, BoundLike, SequenceOrScalar
+from ._utils import prod, ensure_list, meshgrid_list_ij, sub2ind_list
 
 
-def pad(inp, padsize, mode='constant', value=0, side=None):
+def pad(
+    inp: Tensor,
+    padsize: SequenceOrScalar[int],
+    mode: SequenceOrScalar[BoundLike] = 'constant',
+    value: Number = 0,
+    side: Optional[str] = None
+):
     """Pad a tensor.
 
     This function is a bit more generic than torch's native pad
@@ -50,7 +57,8 @@ def pad(inp, padsize, mode='constant', value=0, side=None):
         - `'antireflect'`   (or `'dst2'`)
 
     !!! info "Side modes"
-        Side modes are `'pre'`, `'post'`, `'both'` or `None`.
+        Side modes are `'pre'` (or `'left'`), `'post'` (or `'right'`),
+        `'both'` or `None`.
 
         - If side is not `None`, `inp.dim()` values (or less) should be
           provided.
@@ -70,7 +78,7 @@ def pad(inp, padsize, mode='constant', value=0, side=None):
         Padding mode
     value : scalar
         Value to pad with in mode 'constant'.
-    side : "{'left', 'right', 'both', None}"
+    side : "{'pre', 'post', 'both', None}"
         Use padsize to pad on left side ('pre'), right side ('post') or
         both sides ('both'). If None, the padding side for the left and
         right sides should be provided in alternate order.
@@ -153,8 +161,14 @@ def _pad_bound(inp, padpre, padpost, bound):
     return out
 
 
-def ensure_shape(inp, shape, mode='constant', value=0, side='post',
-                 ceil=False):
+def ensure_shape(
+    inp: Tensor,
+    shape: SequenceOrScalar[Optional[int]],
+    mode: SequenceOrScalar[BoundLike] = 'constant',
+    value: Number = 0,
+    side: str = 'post',
+    ceil: bool = False
+):
     """Pad/crop a tensor so that it has a given shape
 
     Parameters
@@ -179,7 +193,7 @@ def ensure_shape(inp, shape, mode='constant', value=0, side='post',
     if isinstance(shape, int):
         shape = [shape]
     shape = list(shape)
-    shape = [1] * max(0, inp.ndim - len(shape)) + shape
+    shape = [None] * max(0, inp.ndim - len(shape)) + shape
     if inp.ndim < len(shape):
         inp = inp.reshape((1,) * max(0, len(shape) - inp.ndim) + inp.shape)
     inshape = inp.shape
@@ -209,50 +223,6 @@ def ensure_shape(inp, shape, mode='constant', value=0, side='post',
     inp = pad(inp, tuple(pad_size), mode=mode, value=value, side=side)
 
     return inp
-
-
-def make_vector(input, n=None, crop=True, *args,
-                dtype=None, device=None, **kwargs):
-    """Ensure that the input is a (tensor) vector and pad/crop if necessary.
-
-    Parameters
-    ----------
-    input : scalar or sequence or generator
-        Input argument(s).
-    n : int, optional
-        Target length.
-    crop : bool, default=True
-        Crop input sequence if longer than `n`.
-    default : optional
-        Default value to pad with.
-        If not provided, replicate the last value.
-    dtype : torch.dtype, optional
-        Output data type.
-    device : torch.device, optional
-        Output device
-
-    Returns
-    -------
-    output : tensor
-        Output vector.
-
-    """
-    input = torch.as_tensor(input, dtype=dtype, device=device).flatten()
-    if n is None:
-        return input
-    if n is not None and input.numel() >= n:
-        return input[:n] if crop else input
-    has_default = False
-    if args:
-        has_default = True
-        default = args[0]
-    elif 'default' in kwargs:
-        has_default = True
-        default = kwargs['default']
-    if has_default:
-        return ensure_shape(input, n, mode='constant', value=default)
-    else:
-        return ensure_shape(input, n, mode='replicate')
 
 
 def roll(inp, shifts=1, dims=None, bound='circular'):

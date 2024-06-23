@@ -1,0 +1,82 @@
+site_name: torch-bounds
+site_url: https://torch-bounds.readthedocs.io
+repo_url: https://github.com/balbasty/torch-bounds
+edit_uri: blob/main/docs
+site_dir: html
+docs_dir: docs
+theme:
+  name: material
+  palette:
+    primary: amber
+    accent: deep-orange
+  icon:
+    repo: fontawesome/brands/github
+    logo: fontawesome/solid/fire:
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+plugins:
+- mkdocs-jupyter
+- search
+- autorefs
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [.]
+        import:
+        - https://pytorch.org/docs/stable/objects.inv
+        - https://numpy.org/doc/stable/objects.inv
+        options:
+          docstring_style: numpy
+          docstring_section_style: spacy
+          docstring_options:
+            allow_section_blank_line: True
+          merge_init_into_class: True
+          separate_signature: True
+          members_order: source
+          show_source: True
+          show_root_heading: True
+markdown_extensions:
+- admonition
+- toc:
+    toc_depth: 3
+- markdown_grid_tables
+- pymdownx.details
+- pymdownx.superfences
+- pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true
+- pymdownx.inlinehilite
+- pymdownx.snippets
+- pymdownx.arithmatex:
+    generic: true
+- pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format
+- pymdownx.superfences
+- pymdownx.tabbed:
+    alternate_style: true
+    slugify: !!python/object/apply:pymdownx.slugs.slugify
+      kwds:
+        case: lower
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+- javascripts/mathjax.js
+- https://polyfill.io/v3/polyfill.min.js?features=es6
+- https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+- Home: index.md
+- Installation: install.md
+- Padding: api/padding.md
+- Indexing: api/indexing.md
+- Boundary Types: api/types.md
+- Real Transforms: api/realtransforms.md
+- API: api/index.md
+
+watch:
+- bounds

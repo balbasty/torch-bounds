@@ -7,6 +7,13 @@ Classes
 BoundType
     Enum type for bounds
 
+Attributes
+----------
+BoundLike
+    A type hint for any boundary type
+SequenceOrScalar
+    A type hint for values or sequences of values
+
 Functions
 ---------
 to_enum
@@ -22,24 +29,105 @@ to_torch
 
 """  # noqa: E501
 __all__ = [
-    'BoundType', 'to_enum', 'to_int', 'to_fourier', 'to_scipy', 'to_torch',
+    'BoundType',
+    'BoundLike',
+    'SequenceOrScalar',
+    'to_enum',
+    'to_int',
+    'to_fourier',
+    'to_scipy',
+    'to_torch',
 ]
 from enum import Enum
-from typing import Union
+from typing import Union, Sequence, TypeVar
 
 
 class BoundType(Enum):
+    """
+    An Enum type that maps boundry modes of any convention to a
+    unique set of values.
+    """
     zero = zeros = constant = gridconstant = 0
     replicate = repeat = nearest = border = edge = 1
     dct1 = mirror = 2
     dct2 = reflect = reflection = gridmirror = neumann = 3
     dst1 = antimirror = 4
     dst2 = antireflect = dirichlet = 5
-    dft = wrap = gridwrap = circular = circulant = 6
+    dft = fft = wrap = gridwrap = circular = circulant = 6
     nocheck = -1
 
 
+T = TypeVar
+
+SequenceOrScalar = Union[T, Sequence[T]]
+"""Either an element or type `T`, or a sequence of elements of type `T`."""
+
 BoundLike = Union[BoundType, str, int]
+"""
+A boundary mode.
+
+Most conventions are handled (numpy, scipy, torch, see below). Can be one of:
+
+0. `zero`, `zeros`, `constant` or `gridconstant`;
+1. `replicate`, `nearest`, `border` or `edge`;
+2. `dct1` or `mirror`;
+3. `dct2`, `reflect`, `reflection`, `gridmirror` or `neumann`;
+4. `dst1` or `antimirror`;
+5. `dst2`, `antireflect` or `dirichlet`;
+6. `dft`, `fft`, `wrap`, `gridwrap`, `circular` or `circulant`.
+
+Each of these modes can be a `BoundType` value (e.g., `BoundType.mirror`),
+or its string representation (e.g., `"mirror"`).
+
+The aliases `dft`, `dct1`, `dct2`, `dst1` and `dst2` exist because these
+boundary modes correspond to the implicit boundary conditions of each of
+these frequency transform:
+
+- [Discrete Fourier Transform (DFT)](https://w.wiki/92by)
+- [Discrete Cosine Transform I & II (DCT-I, DCT-II)](https://w.wiki/AQEt)
+- [Discrete Sine Transform I & II (DST-I, DST-II)](https://w.wiki/ATnn)
+
+The reason why so many aliases are supported is that there is no common
+convention across python packages to name boundary conditions.
+This table contains an extensive list of aliases:
+
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| Fourier | SciPy `ndimage` | Numpy `pad` | PyTorch `pad` | PyTorch `grid_sample` | Other        | Description                                    |
++=========+=================+=============+===============+=======================+==============+================================================+
+|         | nearest         | edge        | border        | replicate             | repeat       | <code> a  a &#124; a b c d &#124;  d  d</code> |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         | constant,       | constant    | constant      | zeros                 | zero         | <code> 0  0 &#124; a b c d &#124;  0  0</code> |
+|         | grid-constant   |             |               |                       |              |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dct1    | mirror          | reflect     | reflect       | reflection            |              | <code> c  b &#124; a b c d &#124;  c  b</code> |
+|         |                 |             |               | (`False`)             |              |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dct2    | reflect,        | symmetric   |               | reflection            | neumann      | <code> b  a &#124; a b c d &#124;  d  c</code> |
+|         | grid-mirror     |             |               | (`True`)              |              |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dst1    |                 |             |               |                       | antimirror   | <code>-a  0 &#124; a b c d &#124;  0 -d</code> |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dst2    |                 |             |               |                       | antireflect, | <code>-b -a &#124; a b c d &#124; -d -c</code> |
+|         |                 |             |               |                       | dirichlet    |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+| dft     | grid-wrap       | wrap        | circular      |                       | circulant    | <code> c  d &#124; a b c d &#124;  a  b</code> |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         | wrap            |             |               |                       |              | <code> c  d &#124; a b c d &#124;  b  c</code> |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         |                 | linear_ramp |               |                       |              |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+|         |                 | minimum,    |               |                       |              |                                                |
+|         |                 | maximum,    |               |                       |              |                                                |
+|         |                 | mean,       |               |                       |              |                                                |
+|         |                 | median      |               |                       |              |                                                |
++---------+-----------------+-------------+---------------+-----------------------+--------------+------------------------------------------------+
+
+Some of these conventions are inconsistant with each other. For example
+`"wrap"` in `scipy.ndimage` is different from `"wrap"` in `numpy.pad`,
+which corresponds to `"grid-wrap"` in `scipy.ndimage`. Also, `"reflect"`
+in `numpy.pad` and `torch.pad` is different from `"reflect"` in `scipy.ndimage`,
+which correspond to `"symmetric"` in `numpy.pad`.
+"""  # noqa: E501
 
 
 bounds_fourier = ('replicate', 'zero', 'dct2', 'dct1', 'dst2', 'dst1', 'dft')
@@ -47,7 +135,7 @@ bounds_scipy = ('nearest', 'constant', 'reflect', 'mirror', 'wrap')
 bounds_torch = ('nearest', 'zeros', 'reflection')
 bounds_torch_pad = ('border', 'constant', 'reflect', 'circular')
 bounds_other = ('repeat', 'neumann', 'circular', 'circulant',
-                'antireflect', 'dirichlet', 'antimirror')
+                'antireflect', 'dirichlet', 'antimirror', 'fft')
 enum_bounds = (BoundType.zero, BoundType.repeat, BoundType.dct1,
                BoundType.dct2, BoundType.dst1, BoundType.dst2, BoundType.dft)
 int_bounds = tuple(range(7))
@@ -69,7 +157,7 @@ dft_bounds = [b for b in BoundType.__members__.keys()
               if getattr(BoundType, b) == BoundType.dft]
 
 
-def to_enum(bound) -> BoundType:
+def to_enum(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[BoundType]:
     """Convert boundary type to enum type.
 
     !!! note "See also"
@@ -80,7 +168,7 @@ def to_enum(bound) -> BoundType:
 
     Parameters
     ----------
-    bound : [list of] str
+    bound : [list of] bound_like
         Boundary condition in any convention
 
     Returns
@@ -121,7 +209,7 @@ def to_enum(bound) -> BoundType:
     return obound
 
 
-def to_int(bound) -> int:
+def to_int(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[int]:
     """Convert boundary type to enum integer.
 
     !!! note "See also"
@@ -149,7 +237,7 @@ def to_int(bound) -> int:
     return bound
 
 
-def to_fourier(bound):
+def to_fourier(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
     """Convert boundary type to discrete transforms.
 
     !!! note "See also"
@@ -160,7 +248,7 @@ def to_fourier(bound):
 
     Parameters
     ----------
-    bound : [list of] str
+    bound : [list of] bound_like
         Boundary condition in any convention
 
     Returns
@@ -201,7 +289,7 @@ def to_fourier(bound):
     return obound
 
 
-def to_scipy(bound):
+def to_scipy(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
     """Convert boundary type to SciPy's convention.
 
     !!! note "See also"
@@ -212,7 +300,7 @@ def to_scipy(bound):
 
     Parameters
     ----------
-    bound : [list of] str
+    bound : [list of] bound_like
         Boundary condition in any convention
 
     Returns
@@ -253,7 +341,7 @@ def to_scipy(bound):
     return obound
 
 
-def to_torch(bound):
+def to_torch(bound: SequenceOrScalar[BoundLike]) -> SequenceOrScalar[str]:
     """Convert boundary type to PyTorch's convention.
 
     !!! note "See also"
@@ -264,7 +352,7 @@ def to_torch(bound):
 
     Parameters
     ----------
-    bound : [list of] str
+    bound : [list of] bound_like
         Boundary condition in any convention
 
     Returns

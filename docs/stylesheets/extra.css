@@ -1,0 +1,17 @@
+:root {
+    --md-admonition-icon--added: url('https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/.icons/fontawesome/solid/circle-plus.svg')
+  }
+  .md-typeset .admonition.added,
+  .md-typeset details.added {
+    border-color: rgb(43, 155, 70);
+  }
+  .md-typeset .added > .admonition-title,
+  .md-typeset .added > summary {
+    background-color: rgba(43, 155, 70, 0.1);
+  }
+  .md-typeset .added > .admonition-title::before,
+  .md-typeset .added > summary::before {
+    background-color: rgb(43, 155, 70);
+    -webkit-mask-image: var(--md-admonition-icon--added);
+            mask-image: var(--md-admonition-icon--added);
+  }
