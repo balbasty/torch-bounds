@@ -51,7 +51,7 @@ __all__ = [
 import torch
 from torch import Tensor
 from typing import Tuple
-from ._utils import floor_div_int
+from ._utils import floor_div_int, jitscript
 
 
 def nocheck(i, n):
@@ -90,7 +90,7 @@ def replicate_int(i, n):
     return min(max(i, 0), n-1), 1
 
 
-@torch.jit.script
+@jitscript
 def replicate_script(i, n: int) -> Tuple[Tensor, int]:
     return i.clamp(min=0, max=n-1), 1
 
@@ -124,7 +124,7 @@ def dft_int(i, n):
     return i % n, 1
 
 
-@torch.jit.script
+@jitscript
 def dft_script(i, n: int) -> Tuple[Tensor, int]:
     return i.remainder(n), 1
 
@@ -162,7 +162,7 @@ def dct2_int(i: int, n: int) -> Tuple[int, int]:
     return i, 1
 
 
-@torch.jit.script
+@jitscript
 def dct2_script(i, n: int) -> Tuple[Tensor, int]:
     n2 = n * 2
     i = torch.where(i < 0, (n2 - 1) - i, i)
@@ -204,7 +204,7 @@ def dct1_int(i: int, n: int) -> Tuple[int, int]:
     return i, 1
 
 
-@torch.jit.script
+@jitscript
 def dct1_script(i, n: int) -> Tuple[Tensor, int]:
     if n == 1:
         return torch.zeros_like(i), 1
@@ -255,7 +255,7 @@ def dst1_int(i: int, n: int) -> Tuple[int, int]:
     return i, x
 
 
-@torch.jit.script
+@jitscript
 def dst1_script(i, n: int) -> Tuple[Tensor, Tensor]:
     n2 = 2 * (n + 1)
 
@@ -305,7 +305,7 @@ def dst2_int(i: int, n: int) -> Tuple[int, int]:
     return dct2_int(i, n)[0], x
 
 
-@torch.jit.script
+@jitscript
 def dst2_script(i, n: int) -> Tuple[Tensor, Tensor]:
     x = torch.ones([1], dtype=torch.int8, device=i.device)
     x = torch.where(floor_div_int(i, n).remainder(2) >= 1, -x, x)

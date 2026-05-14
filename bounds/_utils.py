@@ -158,6 +158,18 @@ def torch_version(mode, version):
     return _compare_versions(current_version, mode, version)
 
 
+IS_JITSCRIPT_ACTIVATED = int(os.environ.get('PYTORCH_JIT', '1'))
+IS_JITSCRIPT_DEPRECATED = torch_version('>=', (2, 10))
+HAS_FLOOR_DIVIDE = torch_version('>=', (1, 6))
+
+
+if IS_JITSCRIPT_DEPRECATED:
+    def jitscript(func):
+        return func
+else:
+    jitscript = torch.jit.script
+
+
 # In torch < 1.6, div applied to integer tensor performed a floor_divide
 # In torch > 1.6, it performs a true divide.
 # Floor division must be done using `floor_divide`, but it was buggy
@@ -167,30 +179,30 @@ def torch_version(mode, version):
 # performs a correct floor division.
 # Since we only apply floor_divide ot positive values, we are fine.
 if torch_version('>=', [1, 8]):
-    @torch.jit.script
+    @jitscript
     def floor_div(x, y) -> torch.Tensor:
         return torch.div(x, y, rounding_mode='floor')
 
-    @torch.jit.script
+    @jitscript
     def floor_div_int(x, y: int) -> torch.Tensor:
         return torch.div(x, y, rounding_mode='floor')
 elif torch_version('<', (1, 6)):
     floor_div = floor_div_int = torch.div
 else:
-    @torch.jit.script
+    @jitscript
     def floor_div(x, y) -> torch.Tensor:
         return torch.div(x, y, rounding_mode='floor')
 
-    @torch.jit.script
+    @jitscript
     def floor_div_int(x, y: int) -> torch.Tensor:
         return torch.div(x, y, rounding_mode='floor')
 
     floor_div = floor_div_int = torch.floor_divide
 
-#     @torch.jit.script
+#     @jitscript
 #     def floor_div(x, y) -> torch.Tensor:
 #         return (x / y).floor_()
-#     @torch.jit.script
+#     @jitscript
 #     def floor_div_int(x, y: int) -> torch.Tensor:
 #         return (x / y).floor_()
 
@@ -199,25 +211,25 @@ if torch_version('>=', (1, 10)):
     # torch >= 1.10
     # -> use `indexing` keyword
 
-    if not int(os.environ.get('PYTORCH_JIT', '1')):
+    if IS_JITSCRIPT_DEPRECATED or not IS_JITSCRIPT_ACTIVATED:
         # JIT deactivated -> torch.meshgrid takes an unpacked list of tensors
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(*tensors, indexing='ij'))
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(*tensors, indexing='xy'))
 
     else:
         # JIT activated -> torch.meshgrid takes a packed list of tensors
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors, indexing='ij'))
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors, indexing='xy'))
 
@@ -225,14 +237,14 @@ else:
     # torch < 1.10
     # -> implement "xy" mode manually
 
-    if not int(os.environ.get('PYTORCH_JIT', '1')):
+    if IS_JITSCRIPT_DEPRECATED or not IS_JITSCRIPT_ACTIVATED:
         # JIT deactivated -> torch.meshgrid takes an unpacked list of tensors
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors))
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             grid = list(torch.meshgrid(*tensors))
             if len(grid) > 1:
@@ -243,11 +255,11 @@ else:
     else:
         # JIT activated -> torch.meshgrid takes a packed list of tensors
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_ij(tensors: List[Tensor]) -> List[Tensor]:
             return list(torch.meshgrid(tensors))
 
-        @torch.jit.script
+        @jitscript
         def meshgrid_list_xy(tensors: List[Tensor]) -> List[Tensor]:
             grid = list(torch.meshgrid(tensors))
             if len(grid) > 1:
@@ -256,7 +268,7 @@ else:
             return grid
 
 
-@torch.jit.script
+@jitscript
 def reverse_list_int(x: List[int]) -> List[int]:
     """TorchScript equivalent to `x[::-1]`"""
     if len(x) == 0:
@@ -264,7 +276,7 @@ def reverse_list_int(x: List[int]) -> List[int]:
     return [x[i] for i in range(-1, -len(x)-1, -1)]
 
 
-@torch.jit.script
+@jitscript
 def cumprod_list_int(x: List[int], reverse: bool = False,
                      exclusive: bool = False) -> List[int]:
     """Cumulative product of elements in the list
@@ -303,7 +315,7 @@ def cumprod_list_int(x: List[int], reverse: bool = False,
     return lx
 
 
-@torch.jit.script
+@jitscript
 def sub2ind_list(subs: List[Tensor], shape: List[int]):
     """Convert sub indices (i, j, k) into linear indices.
 
